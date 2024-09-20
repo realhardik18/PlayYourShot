@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Ground</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Book a Ground</h2>
+        <form method="POST">
+            <label for="ground">Select Ground:</label>
+            <select id="ground" name="ground" required>
+                <option value="Ground 1">Ground 1</option>
+                <option value="Ground 2">Ground 2</option>
+                <option value="Ground 3">Ground 3</option>
+                <option value="Ground 4">Ground 4</option>
+            </select>
+
+            <label for="date">Select Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="start_time">Start Time:</label>
+            <input type="time" id="start_time" name="start_time" required>
+
+            <label for="duration">Duration (Max 3 hrs):</label>
+            <select id="duration" name="duration" required>
+                <option value="1">1 hour</option>
+                <option value="1.5">1.5 hours</option>
+                <option value="2">2 hours</option>
+                <option value="2.5">2.5 hours</option>
+                <option value="3">3 hours</option>
+            </select>
+
+            <button type="submit">Book</button>
+        </form>
+        <a href="{{ url_for('logout') }}">Logout</a> |
+        <a href="{{ url_for('past_bookings') }}">View Past Bookings</a>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
+    </div>
+</body>
+
+</html>
