@@ -6,39 +6,9 @@ from creds import MONGO_URI
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
-# MongoDB client setup using your MongoDB URI
-client = MongoClient(MONGO_URI)
-db = client['ground_booking']  # Database name
-users_collection = db['users']  # Users collection
-bookings_collection = db['bookings']  # Bookings collection
-
-# Helper functions
-def get_user(email):
-    return users_collection.find_one({"email": email})
-
-def create_user(name, email, phone, password):
-    users_collection.insert_one({
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'password': password,
-        'bookings': []
-    })
-
-def add_booking(ground, date, start_time, duration, user_email):
-    bookings_collection.insert_one({
-        'ground': ground,
-        'date': date,
-        'start_time': start_time,
-        'duration': duration,
-        'user': user_email
-    })
-
-def get_bookings_by_ground(ground):
-    return bookings_collection.find({"ground": ground})
-
-def get_user_bookings(user_email):
-    return bookings_collection.find({"user": user_email})
+# Connect to MongoDB
+client = MongoClient(MONGO_URI)  # Replace 'your_mongo_uri_here' with your MongoDB URI
+db = client['ground_booking_db']  # Replace with your MongoDB database name
 
 @app.route('/')
 def home():
@@ -51,12 +21,12 @@ def register():
         email = request.form['email']
         phone = request.form['phone']
         password = request.form['password']
-
-        user = get_user(email)
-        if user:
+        
+        users = db.users
+        if users.find_one({'email': email}):
             flash('User already exists with this email!', 'error')
         else:
-            create_user(name, email, phone, password)
+            users.insert_one({'name': name, 'email': email, 'phone': phone, 'password': password, 'bookings': []})
             flash('Successfully registered!', 'success')
             return redirect(url_for('login'))
     return render_template('register.html', title="Register")
@@ -67,20 +37,14 @@ def login():
         email_phone = request.form['email_phone']
         password = request.form['password']
 
-        user = users_collection.find_one({
-            "$or": [
-                {"email": email_phone},
-                {"phone": email_phone}
-            ],
-            "password": password
-        })
-
-        if user:
+        users = db.users
+        user = users.find_one({'$or': [{'email': email_phone}, {'phone': email_phone}]})
+        
+        if user and user['password'] == password:
             session['email'] = user['email']
             flash(f'Welcome back, {user["name"]}!', 'success')
             return redirect(url_for('booking'))
-        else:
-            flash('Invalid login credentials', 'error')
+        flash('Invalid login credentials', 'error')
     return render_template('login.html', title="Login")
 
 @app.route('/logout')
@@ -101,22 +65,39 @@ def booking():
         start_time = request.form['start_time']
         duration = int(request.form['duration'])
 
-        # Check for availability
+        # Choose the correct collection (e.g., ground1, ground2, or ground3)
+        ground_collection = db[f'ground{ground[-1]}']
+
+        # Check for availability in MongoDB
         start_time_dt = datetime.strptime(f'{date} {start_time}', '%Y-%m-%d %H:%M')
         end_time_dt = start_time_dt + timedelta(hours=duration)
 
-        existing_bookings = get_bookings_by_ground(ground)
-        for booking in existing_bookings:
-            booking_start = datetime.strptime(f'{booking["date"]} {booking["start_time"]}', '%Y-%m-%d %H:%M')
-            booking_end = booking_start + timedelta(hours=float(booking["duration"]))
-            if start_time_dt < booking_end and end_time_dt > booking_start:
-                flash(f'Time slot overlaps with an existing booking from {booking_start.time()} to {booking_end.time()}', 'error')
-                return redirect(url_for('booking'))
+        existing_bookings = list(ground_collection.find({
+            'date': date,
+            '$or': [
+                {'start_time': {'$lt': end_time_dt.strftime('%H:%M')}},
+                {'end_time': {'$gt': start_time_dt.strftime('%H:%M')}}
+            ]
+        }))
 
-        # Save booking with user info
-        add_booking(ground, date, start_time, duration, session['email'])
+        if len(existing_bookings) > 0:
+            flash('The selected time slot overlaps with an existing booking.', 'error')
+
+            return redirect(url_for('booking'))
+
+        # Insert the booking into MongoDB
+        booking_data = {
+            'user': session['email'],
+            'date': date,
+            'start_time': start_time,
+            'end_time': (start_time_dt + timedelta(hours=duration)).strftime('%H:%M'),
+            'duration': duration
+        }
+
+        ground_collection.insert_one(booking_data)
 
         flash(f'Ground {ground} booked for {date} from {start_time} for {duration} hour(s)', 'success')
+
     return render_template('booking.html', title="Book a Ground")
 
 @app.route('/check_availability', methods=['GET', 'POST'])
@@ -124,14 +105,12 @@ def check_availability():
     if request.method == 'POST':
         ground = request.form['ground']
         date = request.form['date']
-
-        bookings = bookings_collection.find({
-            "ground": ground,
-            "date": date
-        })
-        bookings_on_date = list(bookings)
-
+        
+        ground_collection = db[f'ground{ground[-1]}']
+        bookings_on_date = ground_collection.find({'date': date})
+        
         return render_template('availability_results.html', title="Availability Results", ground=ground, date=date, bookings=bookings_on_date)
+    
     return render_template('check_availability.html', title="Check Availability")
 
 @app.route('/my_bookings')
@@ -139,23 +118,45 @@ def my_bookings():
     if 'email' not in session:
         flash('Please log in to view your bookings.', 'error')
         return redirect(url_for('login'))
-
+        
     user_email = session['email']
-    user_bookings = list(get_user_bookings(user_email))
+    user_bookings = []
+
+    for ground in ['ground1', 'ground2', 'ground3']:
+        ground_collection = db[ground]
+        bookings = ground_collection.find({'user': user_email})
+
+        for booking in bookings:
+            user_bookings.append({
+                'ground': ground,
+                'date': booking['date'],
+                'start_time': booking['start_time'],
+                'duration': booking['duration']
+            })
 
     return render_template('my_bookings.html', title="My Bookings", bookings=user_bookings)
 
 @app.route('/admin')
 def admin():
     if 'email' not in session:
-        flash('Please log in to view your bookings.', 'error')
+        flash('Please log in to view the admin panel.', 'error')
         return redirect(url_for('login'))
 
     if session['email'] != 'admin@harsh':
         return redirect(url_for('home'))
 
-    all_bookings = bookings_collection.find()
-    return render_template('admin.html', title="Admin View", bookings=list(all_bookings))
+    # Fetch bookings from MongoDB
+    ground1_bookings = list(db.ground1.find({}))
+    ground2_bookings = list(db.ground2.find({}))
+    ground3_bookings = list(db.ground3.find({}))
+
+    bookings = {
+        'ground1': ground1_bookings,
+        'ground2': ground2_bookings,
+        'ground3': ground3_bookings,
+    }
+
+    return render_template('admin.html', bookings=bookings)
 
 if __name__ == '__main__':
     app.run(debug=True)
