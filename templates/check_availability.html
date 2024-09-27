@@ -11,7 +11,8 @@
             background-color: #ff8800;
         }
 
-        .navbar-brand {
+        .navbar-brand,
+        .nav-link {
             color: #fff !important;
         }
 
@@ -20,17 +21,10 @@
             color: white;
         }
 
-        .container h2 {
-            color: #ff8800;
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            margin-bottom: 15px;
-        }
-
-        .alert {
-            margin-top: 20px;
+        .navbar a {
+            color: #fff;
+            margin-right: 15px;
+            text-decoration: none;
         }
 
         .navbar-brand,
@@ -56,39 +50,31 @@
     </nav>
 
     <div class="container mt-4">
-        <h2>Register</h2>
-
-        <!-- Display any flashed messages (e.g., success or error) -->
-        {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-
-        <!-- Registration form -->
+        <h2>Check Availability</h2>
         <form method="POST">
             <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" name="name" required>
+                <label for="ground">Select Ground</label>
+                <select class="form-control" id="ground" name="ground" required>
+                    <option value="ground1">Ground 1</option>
+                    <option value="ground2">Ground 2</option>
+                    <option value="ground3">Ground 3</option>
+                </select>
             </div>
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <label for="date">Date</label>
+                <input type="date" class="form-control" id="date" name="date" required>
             </div>
-            <div class="form-group">
-                <label for="phone">Phone</label>
-                <input type="text" class="form-control" id="phone" name="phone" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-orange">Register</button>
+            <button type="submit" class="btn btn-orange">Check</button>
         </form>
 
-        <p class="mt-2">Already have an account? <a href="{{ url_for('login') }}">Login here</a>.</p>
+        {% if availability %}
+        <h3 class="mt-4">Availability for {{ selected_ground }} on {{ selected_date }}:</h3>
+        <ul>
+            {% for time in availability %}
+            <li>{{ time }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
