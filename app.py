@@ -9,7 +9,6 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 # Connect to MongoDB
-load_dotenv()
 client = MongoClient(os.getenv("MONGO_URI"))  # Replace 'your_mongo_uri_here' with your MongoDB URI
 db = client['ground_booking_db']  # Replace with your MongoDB database name
 

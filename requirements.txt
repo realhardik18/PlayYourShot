@@ -1,5 +1,3 @@
 Flask
 Gunicorn
 Pymongo
-psycopg2
-dotenv
