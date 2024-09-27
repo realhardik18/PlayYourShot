@@ -44,7 +44,7 @@
     </nav>
 
     <div class="container mt-4">
-        <h2>Book a Ground</h2>
+        <h2>Book a Net</h2>
         {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
         {% for category, message in messages %}
@@ -54,11 +54,13 @@
         {% endwith %}
         <form method="POST">
             <div class="form-group">
-                <label for="ground">Select Ground</label>
+                <label for="ground">Select Net</label>
                 <select class="form-control" id="ground" name="ground" required>
-                    <option value="ground1">Ground 1</option>
-                    <option value="ground2">Ground 2</option>
-                    <option value="ground3">Ground 3</option>
+                    <option value="ground1">Net 1(Cement)</option>
+                    <option value="ground2">Net 2(Cement)</option>
+                    <option value="ground3">Net 3(Turf Wicket)</option>
+                    <option value="ground4">Net 4(Turf Wicket)</option>
+                    <option value="ground5">Center Wicket + Ground</option>
                 </select>
             </div>
             <div class="form-group">

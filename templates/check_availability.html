@@ -8,7 +8,7 @@
     <title>{{ title }}</title>
     <style>
         .navbar {
-            background-color: #ff8800;
+            background-color: #fc4d20;
         }
 
         .navbar-brand,
@@ -17,13 +17,12 @@
         }
 
         .btn-orange {
-            background-color: #ff8800;
+            background-color: #fc4d20;
             color: white;
         }
 
         .navbar a {
             color: #fff;
-            margin-right: 15px;
             text-decoration: none;
         }
 
@@ -43,6 +42,7 @@
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('check_availability') }}">Check
                         Availability</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('my_bookings') }}">My Bookings</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('admin') }}">Admin</a></li>
             </ul>
         </div>
@@ -52,11 +52,13 @@
         <h2>Check Availability</h2>
         <form method="POST">
             <div class="form-group">
-                <label for="ground">Select Ground</label>
+                <label for="ground">Select Net</label>
                 <select class="form-control" id="ground" name="ground" required>
-                    <option value="ground1">Ground 1</option>
-                    <option value="ground2">Ground 2</option>
-                    <option value="ground3">Ground 3</option>
+                    <option value="ground1">Net 1(Cement)</option>
+                    <option value="ground2">Net 2(Cement)</option>
+                    <option value="ground3">Net 3(Turf Wicket)</option>
+                    <option value="ground4">Net 4(Turf Wicket)</option>
+                    <option value="ground5">Center Wicket + Ground</option>
                 </select>
             </div>
             <div class="form-group">

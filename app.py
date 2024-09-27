@@ -2,18 +2,29 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 import os
-#from creds import MONGO_URI
+from creds import MONGO_URI
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 # Connect to MongoDB
 client = MongoClient(os.getenv("MONGO_URI"))  # Replace 'your_mongo_uri_here' with your MongoDB URI
+#client = MongoClient(MONGO_URI)
+def get_display_text(file):
+    data={
+        'ground1':"Net 1(Cement Wicket)",        
+        'ground2':"Net 2(Cement Wicket)",
+        'ground3':"Net 3(Turf Wicket)",
+        'ground4':"Net 4(Turf Wicket)",
+        'ground5':"Center Wicket + Ground",
+    }
+    return data[file]
 db = client['ground_booking_db']  # Replace with your MongoDB database name
 
 @app.route('/')
 def home():
     return render_template('home.html', title="Home")
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -104,7 +115,7 @@ def booking():
 @app.route('/check_availability', methods=['GET', 'POST'])
 def check_availability():
     if request.method == 'POST':
-        ground = request.form['ground']
+        ground = get_display_text(request.form['ground'])
         date = request.form['date']
         
         ground_collection = db[f'ground{ground[-1]}']
@@ -129,7 +140,7 @@ def my_bookings():
 
         for booking in bookings:
             user_bookings.append({
-                'ground': ground,
+                'ground': get_display_text(ground),
                 'date': booking['date'],
                 'start_time': booking['start_time'],
                 'duration': booking['duration']
