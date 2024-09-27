@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from pymongo import MongoClient
 from datetime import datetime, timedelta
-from creds import MONGO_URI
+#from creds import MONGO_URI
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 # Connect to MongoDB
-client = MongoClient(MONGO_URI)  # Replace 'your_mongo_uri_here' with your MongoDB URI
+client = MongoClient('yes')  # Replace 'your_mongo_uri_here' with your MongoDB URI
 db = client['ground_booking_db']  # Replace with your MongoDB database name
 
 @app.route('/')
