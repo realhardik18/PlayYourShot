@@ -42,6 +42,15 @@
 
     <div class="container mt-4">
         <h2>My Bookings</h2>
+        <p><strong>Pay The Amount To Verify Net Booking</strong></p>
+        <p>UPI ID: 9891671291@ybl<br>
+            OR<br>
+            Account Holder Name: Harsh Vikram Singh<br>
+            Bank Name: State Bank Of India<br>
+            Type Account: Savings<br>
+            Account Number: 37877446012<br>
+            IFSC: SBIN0003475<br>
+        </p>
         {% if bookings %}
         <ul class="list-group">
             {% for booking in bookings %}
@@ -49,8 +58,10 @@
                 <strong>Ground:</strong> {{ booking.ground }}<br>
                 <strong>Date:</strong> {{ booking.date }}<br>
                 <strong>Start Time:</strong> {{ booking.start_time }}<br>
-                <strong>Duration:</strong> {{ booking.duration }} hours
+                <strong>Duration:</strong> {{ booking.duration }} hours<br>
+                <strong>Status:</strong> {{ booking.status }} <!-- Display status -->
             </li>
+
             {% endfor %}
         </ul>
         {% else %}
