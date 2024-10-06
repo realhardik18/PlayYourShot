@@ -3,13 +3,14 @@ from pymongo import MongoClient
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import os
-from creds import MONGO_URI
+#from creds import MONGO_URI
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 # Connect to MongoDB
-client = MongoClient(os.getenv("MONGO_URI"))  # Replace 'your_mongo_uri_here' with your MongoDB URI
+client = MongoClient(os.getenv("MONGO_URI")
+                     )  # Replace 'your_mongo_uri_here' with your MongoDB URI
 #client = MongoClient(MONGO_URI)    
 def get_display_text(file):
     data={
