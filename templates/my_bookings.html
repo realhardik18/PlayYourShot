@@ -45,10 +45,7 @@
         <p><strong>Pay The Amount To Verify Net Booking</strong></p>
         <p>UPI ID: 9891671291@ybl<br>
             OR<br>
-            Account Holder Name: Harsh Vikram Singh<br>
-            Bank Name: State Bank Of India<br>
-            Type Account: Savings<br>
-            Account Number: 37877446012<br>
+            Account Number: 37877446012
             IFSC: SBIN0003475<br>
         </p>
         {% if bookings %}
@@ -59,6 +56,7 @@
                 <strong>Date:</strong> {{ booking.date }}<br>
                 <strong>Start Time:</strong> {{ booking.start_time }}<br>
                 <strong>Duration:</strong> {{ booking.duration }} hours<br>
+                <strong>Amount:</strong> Rs.{{ booking.amount }} <br>
                 <strong>Status:</strong> {{ booking.status }} <!-- Display status -->
             </li>
 

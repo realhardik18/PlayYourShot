@@ -69,6 +69,7 @@
                             <th>Start Time</th>
                             <th>Duration (hours)</th>
                             <th>Status</th>
+                            <th>Amount</th>
                             <th>Verify</th>
                             <th>Delete</th>
                         </tr>
@@ -82,6 +83,7 @@
                             <td>{{ booking.start_time }}</td>
                             <td>{{ booking.duration }}</td>
                             <td>{{ booking.status }}</td> <!-- Display status -->
+                            <td>Rs.{{ booking.amount }}</td>
                             <td>
                                 {% if booking.status == 'unverified' %}
                                 <!-- Show "Verify" button if booking is unverified -->
@@ -121,7 +123,7 @@
                 <h2>Net 2(Cement)</h2>
             </div>
             <div class="card-body">
-                {% if bookings.ground1 %}
+                {% if bookings.ground2 %}
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -130,6 +132,7 @@
                             <th>Start Time</th>
                             <th>Duration (hours)</th>
                             <th>Status</th>
+                            <th>Amount</th>
                             <th>Verify</th>
                             <th>Delete</th>
                         </tr>
@@ -142,7 +145,8 @@
                             <td>{{ booking.date }}</td>
                             <td>{{ booking.start_time }}</td>
                             <td>{{ booking.duration }}</td>
-                            <td>{{ booking.status }}</td> <!-- Display status -->
+                            <td>{{ booking.status }}</td>
+                            <td>Rs.{{ booking.amount }}</td> <!-- Display status -->
                             <td>
                                 {% if booking.status == 'unverified' %}
                                 <!-- Show "Verify" button if booking is unverified -->
@@ -191,6 +195,7 @@
                             <th>Start Time</th>
                             <th>Duration (hours)</th>
                             <th>Status</th>
+                            <th>Amount</th>
                             <th>Verify</th>
                             <th>Delete</th>
                         </tr>
@@ -203,7 +208,8 @@
                             <td>{{ booking.date }}</td>
                             <td>{{ booking.start_time }}</td>
                             <td>{{ booking.duration }}</td>
-                            <td>{{ booking.status }}</td> <!-- Display status -->
+                            <td>{{ booking.status }}</td>
+                            <td>Rs.{{ booking.amount }}</td> <!-- Display status -->
                             <td>
                                 {% if booking.status == 'unverified' %}
                                 <!-- Show "Verify" button if booking is unverified -->
@@ -252,6 +258,7 @@
                             <th>Start Time</th>
                             <th>Duration (hours)</th>
                             <th>Status</th>
+                            <th>Amount</th>
                             <th>Verify</th>
                             <th>Delete</th>
                         </tr>
@@ -264,7 +271,8 @@
                             <td>{{ booking.date }}</td>
                             <td>{{ booking.start_time }}</td>
                             <td>{{ booking.duration }}</td>
-                            <td>{{ booking.status }}</td> <!-- Display status -->
+                            <td>{{ booking.status }}</td>
+                            <td>Rs.{{ booking.amount }}</td> <!-- Display status -->
                             <td>
                                 {% if booking.status == 'unverified' %}
                                 <!-- Show "Verify" button if booking is unverified -->
@@ -313,6 +321,7 @@
                             <th>Start Time</th>
                             <th>Duration (hours)</th>
                             <th>Status</th>
+                            <th>Amount</th>
                             <th>Verify</th>
                             <th>Delete</th>
                         </tr>
@@ -325,7 +334,8 @@
                             <td>{{ booking.date }}</td>
                             <td>{{ booking.start_time }}</td>
                             <td>{{ booking.duration }}</td>
-                            <td>{{ booking.status }}</td> <!-- Display status -->
+                            <td>{{ booking.status }}</td>
+                            <td>Rs.{{ booking.amount }}</td> <!-- Display status -->
                             <td>
                                 {% if booking.status == 'unverified' %}
                                 <!-- Show "Verify" button if booking is unverified -->
@@ -343,7 +353,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <form action="{{ url_for('delete_booking', ground='ground1', booking_id=booking._id) }}"
+                                <form action="{{ url_for('delete_booking', ground='ground5', booking_id=booking._id) }}"
                                     method="POST">
                                     <button type="submit" class="btn btn-danger">Delete</button>
                                 </form>

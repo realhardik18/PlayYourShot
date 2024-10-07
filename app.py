@@ -8,9 +8,25 @@ import os
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
+def price(type,end_time,duration):
+    if end_time>=18:
+        if type[-1] in ['1','2']:
+            return 700*duration        
+        elif type[-2] in ['3','4']:
+            return 1500*duration
+        else:
+            return 3000*duration
+    else:
+        if type[-1] in ['1','2']:
+            return 500*duration        
+        elif type[-2] in ['3','4']:
+            return 1000*duration
+        else:
+            return 2000*duration        
+
+        
 # Connect to MongoDB
-client = MongoClient(os.getenv("MONGO_URI")
-                     )  # Replace 'your_mongo_uri_here' with your MongoDB URI
+client = MongoClient(os.getenv("MONGO_URI"))  # Replace 'your_mongo_uri_here' with your MongoDB URI
 #client = MongoClient(MONGO_URI)    
 def get_display_text(file):
     data={
@@ -38,7 +54,7 @@ def register():
         
         users = db.users
         if users.find_one({'email': email}):
-            flash('User already exists with this email!', 'error')
+            flash('User already exists with this email!', 'danger')
         else:
             users.insert_one({'name': name, 'email': email, 'phone': phone, 'password': password, 'bookings': []})
             flash('Successfully registered!', 'success')
@@ -60,7 +76,7 @@ def login():
             session['phone'] = user['phone']
             flash(f'Welcome back, {user["name"]}!', 'success')
             return redirect(url_for('booking'))
-        flash('Invalid login credentials', 'error')
+        flash('Invalid login credentials', 'danger')
     return render_template('login.html', title="Login")
 
 @app.route('/logout')
@@ -72,7 +88,7 @@ def logout():
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
     if 'email' not in session:
-        flash('Please log in to book a ground.', 'error')
+        flash('Please log in to book a ground.', 'danger')
         return redirect(url_for('login'))
         
     if request.method == 'POST':
@@ -97,12 +113,13 @@ def booking():
         }))
 
         if len(existing_bookings) > 0:
-            flash('The selected time slot overlaps with an existing booking.', 'error')
+            flash('The selected time slot overlaps with an existing booking.', 'danger')
 
             return redirect(url_for('booking'))
 
         # Insert the booking into MongoDB
     # Insert the booking into MongoDB with status as 'unverified'
+        amount=price(type=ground,duration=duration,end_time=end_time_dt.hour)
         booking_data = {
             'user': session['email'],
             'user_name': session['name'],
@@ -111,11 +128,11 @@ def booking():
             'start_time': start_time,
             'end_time': (start_time_dt + timedelta(hours=duration)).strftime('%H:%M'),
             'duration': duration,
+            'amount':amount,
             'status': 'unverified'  # Add status
-        }
-
+        }        
         ground_collection.insert_one(booking_data)
-        flash(f'Ground {ground} booked for {date} from {start_time} for {duration} hour(s)', 'success')
+        flash(f'booked for {date} from {start_time} for {duration} hour(s)! Please Pay {amount} to verify the booking!', 'success')
 
 
     return render_template('booking.html', title="Book a Ground")
@@ -136,7 +153,7 @@ def check_availability():
 @app.route('/my_bookings')
 def my_bookings():
     if 'email' not in session:
-        flash('Please log in to view your bookings.', 'error')
+        flash('Please log in to view your bookings.', 'danger')
         return redirect(url_for('login'))
         
     user_email = session['email']
@@ -152,6 +169,7 @@ def my_bookings():
                 'date': booking['date'],
                 'start_time': booking['start_time'],
                 'duration': booking['duration'],
+                'amount': booking['amount'],
                 'status': booking['status']
             })
 
@@ -160,7 +178,7 @@ def my_bookings():
 @app.route('/admin')
 def admin():
     if 'email' not in session:
-        flash('Please log in to view the admin panel.', 'error')
+        flash('Please log in to view the admin panel.', 'danger')
         return redirect(url_for('login'))
 
     if session['email'] != 'admin@shot':
@@ -188,7 +206,7 @@ from bson.objectid import ObjectId
 @app.route('/verify_booking/<ground>/<booking_id>', methods=['POST'])
 def verify_booking(ground, booking_id):
     if 'email' not in session or session['email'] != 'admin@shot':
-        flash('Unauthorized access!', 'error')
+        flash('Unauthorized access!', 'danger')
         return redirect(url_for('home'))
 
     ground_collection = db[ground]
@@ -199,7 +217,7 @@ def verify_booking(ground, booking_id):
 @app.route('/unverify_booking/<ground>/<booking_id>', methods=['POST'])
 def unverify_booking(ground, booking_id):
     if 'email' not in session or session['email'] != 'admin@shot':
-        flash('Unauthorized access', 'error')
+        flash('Unauthorized access', 'danger')
         return redirect(url_for('login'))
 
     ground_collection = db[ground]
@@ -211,7 +229,7 @@ def unverify_booking(ground, booking_id):
 @app.route('/delete_booking/<ground>/<booking_id>', methods=['POST'])
 def delete_booking(ground, booking_id):
     if 'email' not in session or session['email'] != 'admin@shot':
-        flash('Unauthorized access!', 'error')
+        flash('Unauthorized access!', 'danger')
         return redirect(url_for('home'))
 
     ground_collection = db[ground]
