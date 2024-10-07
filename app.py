@@ -118,7 +118,7 @@ def booking():
             return redirect(url_for('booking'))
 
         # Insert the booking into MongoDB
-    # Insert the booking into MongoDB with status as 'unverified'
+    # Insert the booking into MongoDB with status as 'not confirmed'
         amount=price(type=ground,duration=duration,end_time=end_time_dt.hour)
         booking_data = {
             'user': session['email'],
@@ -129,7 +129,7 @@ def booking():
             'end_time': (start_time_dt + timedelta(hours=duration)).strftime('%H:%M'),
             'duration': duration,
             'amount':amount,
-            'status': 'unverified'  # Add status
+            'status': 'not confirmed'  # Add status
         }        
         ground_collection.insert_one(booking_data)
         flash(f'booked for {date} from {start_time} for {duration} hour(s)! Please Pay {amount} to verify the booking!', 'success')
@@ -210,8 +210,8 @@ def verify_booking(ground, booking_id):
         return redirect(url_for('home'))
 
     ground_collection = db[ground]
-    ground_collection.update_one({'_id': ObjectId(booking_id)}, {'$set': {'status': 'verified'}})
-    flash('Booking has been verified.', 'success')
+    ground_collection.update_one({'_id': ObjectId(booking_id)}, {'$set': {'status': 'confirmed'}})
+    flash('Booking has been confirmed.', 'success')
     return redirect(url_for('admin'))
 
 @app.route('/unverify_booking/<ground>/<booking_id>', methods=['POST'])
@@ -221,8 +221,8 @@ def unverify_booking(ground, booking_id):
         return redirect(url_for('login'))
 
     ground_collection = db[ground]
-    ground_collection.update_one({'_id': ObjectId(booking_id)}, {'$set': {'status': 'unverified'}})
-    flash('Booking has been unverified.', 'success')
+    ground_collection.update_one({'_id': ObjectId(booking_id)}, {'$set': {'status': 'not confirmed'}})
+    flash('Booking has been not confirmed.', 'success')
     return redirect(url_for('admin'))
 
 

@@ -85,8 +85,8 @@
                             <td>{{ booking.status }}</td> <!-- Display status -->
                             <td>Rs.{{ booking.amount }}</td>
                             <td>
-                                {% if booking.status == 'unverified' %}
-                                <!-- Show "Verify" button if booking is unverified -->
+                                {% if booking.status == 'not confirmed' %}
+                                <!-- Show "Verify" button if booking is not confirmed -->
                                 <form action="{{ url_for('verify_booking', ground='ground1', booking_id=booking._id) }}"
                                     method="POST">
                                     <button type="submit" class="btn btn-success">Verify</button>
@@ -148,8 +148,8 @@
                             <td>{{ booking.status }}</td>
                             <td>Rs.{{ booking.amount }}</td> <!-- Display status -->
                             <td>
-                                {% if booking.status == 'unverified' %}
-                                <!-- Show "Verify" button if booking is unverified -->
+                                {% if booking.status == 'not confirmed' %}
+                                <!-- Show "Verify" button if booking is not confirmed -->
                                 <form action="{{ url_for('verify_booking', ground='ground2', booking_id=booking._id) }}"
                                     method="POST">
                                     <button type="submit" class="btn btn-success">Verify</button>
@@ -211,8 +211,8 @@
                             <td>{{ booking.status }}</td>
                             <td>Rs.{{ booking.amount }}</td> <!-- Display status -->
                             <td>
-                                {% if booking.status == 'unverified' %}
-                                <!-- Show "Verify" button if booking is unverified -->
+                                {% if booking.status == 'not confirmed' %}
+                                <!-- Show "Verify" button if booking is not confirmed -->
                                 <form action="{{ url_for('verify_booking', ground='ground3', booking_id=booking._id) }}"
                                     method="POST">
                                     <button type="submit" class="btn btn-success">Verify</button>
@@ -274,8 +274,8 @@
                             <td>{{ booking.status }}</td>
                             <td>Rs.{{ booking.amount }}</td> <!-- Display status -->
                             <td>
-                                {% if booking.status == 'unverified' %}
-                                <!-- Show "Verify" button if booking is unverified -->
+                                {% if booking.status == 'not confirmed' %}
+                                <!-- Show "Verify" button if booking is not confirmed -->
                                 <form action="{{ url_for('verify_booking', ground='ground4', booking_id=booking._id) }}"
                                     method="POST">
                                     <button type="submit" class="btn btn-success">Verify</button>
@@ -337,8 +337,8 @@
                             <td>{{ booking.status }}</td>
                             <td>Rs.{{ booking.amount }}</td> <!-- Display status -->
                             <td>
-                                {% if booking.status == 'unverified' %}
-                                <!-- Show "Verify" button if booking is unverified -->
+                                {% if booking.status == 'not confirmed' %}
+                                <!-- Show "Verify" button if booking is not confirmed -->
                                 <form action="{{ url_for('verify_booking', ground='ground5', booking_id=booking._id) }}"
                                     method="POST">
                                     <button type="submit" class="btn btn-success">Verify</button>
