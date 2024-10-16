@@ -22,7 +22,7 @@ def price(type,end_time,duration):
         elif type[-2] in ['3','4']:
             return 1000*duration
         else:
-            return 2000*duration        
+            return 1500*duration        
 
         
 # Connect to MongoDB
@@ -41,6 +41,7 @@ db = client['ground_booking_db']  # Replace with your MongoDB database name
 
 @app.route('/')
 def home():
+    
     return render_template('home.html', title="Home")
 
 
@@ -90,7 +91,8 @@ def booking():
     if 'email' not in session:
         flash('Please log in to book a ground.', 'danger')
         return redirect(url_for('login'))
-        
+    if session['email'] == 'admin@shot':
+        return redirect(url_for('admin'))        
     if request.method == 'POST':
         ground = request.form['ground']
         date = request.form['date']
@@ -139,6 +141,8 @@ def booking():
 
 @app.route('/check_availability', methods=['GET', 'POST'])
 def check_availability():
+    if session['email'] == 'admin@shot':
+        return redirect(url_for('admin'))    
     if request.method == 'POST':
         ground = get_display_text(request.form['ground'])
         date = request.form['date']
@@ -158,7 +162,8 @@ def my_bookings():
         
     user_email = session['email']
     user_bookings = []
-
+    if session['email'] == 'admin@shot':
+        return redirect(url_for('admin'))
     for ground in ['ground1', 'ground2', 'ground3']:
         ground_collection = db[ground]
         bookings = ground_collection.find({'user': user_email})
