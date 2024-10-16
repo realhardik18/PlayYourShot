@@ -9,17 +9,21 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 def price(type,end_time,duration):
-    if end_time>=18:
+    print('hello')    
+    print(type[-1])
+    print(type[-1] in ['1','2'])
+    print(type[-1] in ['3','4'])
+    if int(end_time)>=18:
         if type[-1] in ['1','2']:
             return 700*duration        
-        elif type[-2] in ['3','4']:
+        elif type[-1] in ['3','4']:
             return 1500*duration
         else:
             return 3000*duration
     else:
         if type[-1] in ['1','2']:
             return 500*duration        
-        elif type[-2] in ['3','4']:
+        elif type[-1] in ['3','4']:
             return 1000*duration
         else:
             return 1500*duration        
@@ -41,7 +45,7 @@ db = client['ground_booking_db']  # Replace with your MongoDB database name
 
 @app.route('/')
 def home():
-    
+
     return render_template('home.html', title="Home")
 
 
